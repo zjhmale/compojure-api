@@ -159,6 +159,19 @@
 
 (import-vars [ring.swagger.ui swagger-ui])
 
+(defn swagger-support
+  [handler swagger]
+  (fn [request]
+    (handler (assoc request :swagger swagger))))
+
+(defmacro collect-routes [& body]
+  (let [info {"api" (first (swagger-info body))}]
+    `(swagger-support (routes ~@body) '~info)))
+
+(defmacro swaggerapi [name & body]
+  `(defapi name
+     (collect-routes ~@body)))
+
 (defn swagger-docs
   "Route to serve the swagger api-docs. If the first
    parameter is a String, it is used as a url for the
@@ -173,14 +186,14 @@
                             ["/api/api-docs" body])
         parameters (apply hash-map key-values)]
     (routes
-      (GET path []
-           (swagger/api-listing parameters @swagger))
-      (GET (str path "/:api") {{api :api} :route-params :as request}
+      (GET path {new-swagger :swagger}
+           (swagger/api-listing parameters (or new-swagger @swagger)))
+      (GET (str path "/:api") {{api :api} :route-params new-swagger :swagger :as request}
            (let [produces (-> request :meta :produces (or []))
                  consumes (-> request :meta :consumes (or []))
                  parameters (merge parameters {:produces produces
                                                :consumes consumes})]
-             (swagger/api-declaration parameters @swagger api (swagger/basepath request)))))))
+             (swagger/api-declaration parameters (or new-swagger @swagger) api (swagger/basepath request)))))))
 
 (defmacro swaggered
   "Defines a swagger-api. Takes api-name, optional
@@ -191,5 +204,6 @@
   (let [[details body] (swagger-info body)
         name (s/replace (str (eval name)) #" " "")]
     `(do
+       ;; TODO: should be just a marker for the route peeling to recognize
        (swap! swagger assoc-map-ordered ~name '~details)
        (routes ~@body))))
