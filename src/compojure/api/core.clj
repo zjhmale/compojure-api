@@ -20,8 +20,8 @@
   (let [source (drop 2 &form)
         [name routes] (name-with-attributes name routes)
         route-info (r/route-info routes)]
-    `(def ~name (with-meta (routes ~@routes) {::r/routes '~route-info
-                                              :source '~source
+    `(def ~name (with-meta (routes ~@routes) {:source '~source
+                                              ::r/routes '~route-info
                                               ::r/inline true}))))
 
 (defmacro GET*     [& args] (restructure #'GET     args))
