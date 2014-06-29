@@ -190,7 +190,8 @@
        path-vals
        (map create-api-route)
        (map attach-meta-data-to-route)
-       reverse))
+       reverse
+       vec))
 
 (defn route-info [body]
   (let [[parameters body] (extract-parameters body)
