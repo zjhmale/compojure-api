@@ -44,12 +44,18 @@
 (def compojure-macro?     (union compojure-route? compojure-context? compojure-letroutes?))
 
 (defn inline? [x] (and (symbol? x) (-> x eval-re-resolve value-of meta ::inline)))
+(defn route-tree? [x] (and (symbol? x) (-> x eval-re-resolve value-of meta ::routes)))
+
+(defrecord Route [p b])
+(defrecord Routes [p c])
+(defrecord RouteTree [p c])
 
 (defn macroexpand-to-compojure [form]
   (walk/prewalk
     (fn [x]
       (cond
-        (inline? x) (-> x value-of meta :source)            ;; resolve the syms!
+        (route-tree? x) (-> x value-of meta :source) ;; FIXME
+        (inline? x) (-> x value-of meta :source) ;; resolve the syms!
         (seq? x)    (let [sym (first x)]
                       (if (and
                             (symbol? sym)
@@ -63,16 +69,13 @@
         :else x))
     form))
 
-(defrecord CompojureRoute [p b])
-(defrecord CompojureRoutes [p c])
-
 (defn is-a?
   "like instanceof? but compares .toString of a classes"
   [c x] (= (str c) (str (class x))))
 
 (defn filter-routes [c]
-  (filter #(or (is-a? CompojureRoute %)
-               (is-a? CompojureRoutes %)) (flatten c)))
+  (filter #(or (is-a? Route %)
+               (is-a? Routes %)) (flatten c)))
 
 (defn collect-compojure-routes [form]
   (walk/postwalk
@@ -83,9 +86,9 @@
           (let [[m p] x
                 rm (and (symbol? m) (eval-re-resolve m))]
             (cond
-              (compojure-route? rm)     (->CompojureRoute p x)
-              (compojure-context? rm)   (->CompojureRoutes p  (filter-routes x))
-              (compojure-letroutes? rm) (->CompojureRoutes "" (filter-routes x))
+              (compojure-route? rm)     (->Route p x)
+              (compojure-context? rm)   (->Routes p  (filter-routes x))
+              (compojure-letroutes? rm) (->Routes "" (filter-routes x))
               :else                     x)))
         x))
     form))
@@ -103,13 +106,13 @@
 
 (defn create-paths [{:keys [p b c] :as r}]
   (cond
-    (is-a? CompojureRoute r)  (let [route-meta (meta r)
+    (is-a? Route r)  (let [route-meta (meta r)
                                     method-meta (meta (first b))
                                     parameter-meta (first (extract-parameters (drop 3 b)))
                                     metadata (merge route-meta method-meta parameter-meta)
                                     new-body [(with-meta (first b) metadata) (rest b)]]
                                 [[p (extract-method b)] new-body])
-    (is-a? CompojureRoutes r) [[p nil] (reduce (partial apply assoc-map-ordered) {} (map create-paths c))]))
+    (is-a? Routes r) [[p nil] (reduce (partial apply assoc-map-ordered) {} (map create-paths c))]))
 
 (defn route-metadata [body]
   (remove-empty-keys
@@ -173,7 +176,7 @@
 
 (defn ensure-routes-in-root [body]
   (if (seq? body)
-    (->CompojureRoutes "" (filter-routes body))
+    (->Routes "" (filter-routes body))
     body))
 
 (defn extract-routes [body]
