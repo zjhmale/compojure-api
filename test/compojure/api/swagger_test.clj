@@ -101,7 +101,7 @@
 
   (fact "with keyword-parameters"
     (first
-      (swagger-info
+      (route-info
         '(:title ..title..
           :description ..description..
           :routes ..overridded..
@@ -117,7 +117,7 @@
 
   (fact "with map-parameters"
     (first
-      (swagger-info
+      (route-info
         '({:title ..title..
            :description ..description..
            :routes ..overridded..}
