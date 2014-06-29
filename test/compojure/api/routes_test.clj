@@ -1,8 +1,8 @@
-(ns compojure.api.swagger-test
+(ns compojure.api.routes-test
   (:require [midje.sweet :refer :all]
             [compojure.core :refer :all]
             [compojure.api.core :refer :all]
-            [compojure.api.swagger :refer :all]))
+            [compojure.api.routes :refer :all]))
 
 (fact "extracting compojure paths"
 
@@ -97,7 +97,7 @@
          :metadata {:parameters [{:type :path
                                   :model {:param String}}]}}]))
 
-(facts "swagger-info"
+(facts "route-info"
 
   (fact "with keyword-parameters"
     (first

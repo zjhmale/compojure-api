@@ -1,7 +1,7 @@
 (ns compojure.api.core
   (:require [potemkin :refer [import-vars]]
             [compojure.core :refer :all]
-            [compojure.api.routes :as routes]
+            [compojure.api.routes :as r]
             [compojure.api.middleware :refer [api-middleware]]
             [compojure.api.meta :refer [restructure]]
             [clojure.tools.macro :refer [name-with-attributes]]))
@@ -9,7 +9,7 @@
 (defmacro defapi [name & body]
   `(defroutes ~name
      (api-middleware
-       (routes/with-routes ~@body))))
+       (r/with-routes ~@body))))
 
 (import-vars [compojure.api.meta middlewares])
 
@@ -18,9 +18,11 @@
   optionally be followed by a doc-string and metadata map."
   [name & routes]
   (let [source (drop 2 &form)
-        [name routes] (name-with-attributes name routes)]
-    `(def ~name (with-meta (routes ~@routes) {:source '~source
-                                              :inline true}))))
+        [name routes] (name-with-attributes name routes)
+        route-info (r/route-info routes)]
+    `(def ~name (with-meta (routes ~@routes) {::r/routes '~route-info
+                                              :source '~source
+                                              ::r/inline true}))))
 
 (defmacro GET*     [& args] (restructure #'GET     args))
 (defmacro ANY*     [& args] (restructure #'ANY     args))

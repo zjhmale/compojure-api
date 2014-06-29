@@ -2,6 +2,7 @@
   (:require [clojure.string :as st]
             [potemkin :refer [import-vars]]
             [ring.swagger.core :as swagger]
+            [compojure.api.common :refer :all]
             ring.swagger.ui
             [compojure.api.routes :as routes]
             [compojure.core :refer :all]))

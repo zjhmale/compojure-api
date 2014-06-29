@@ -43,7 +43,7 @@
 (def compojure-letroutes? #{#'let-routes})
 (def compojure-macro?     (union compojure-route? compojure-context? compojure-letroutes?))
 
-(defn inline? [x] (and (symbol? x) (-> x eval-re-resolve value-of meta :inline)))
+(defn inline? [x] (and (symbol? x) (-> x eval-re-resolve value-of meta ::inline)))
 
 (defn macroexpand-to-compojure [form]
   (walk/prewalk
