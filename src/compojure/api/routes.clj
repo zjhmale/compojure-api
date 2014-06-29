@@ -117,7 +117,7 @@
 (defn route-metadata [body]
   (remove-empty-keys
     (let [{:keys [return parameters] :as meta} (unwrap-meta-container (last (second body)))]
-      (merge meta {:parameters (and parameters (doall (map eval parameters)))
+      (merge meta {:parameters (and parameters (doall (mapv eval parameters)))
                    :return (eval return)}))))
 
 (defn ensure-path-parameters [uri route-with-meta]
@@ -142,7 +142,7 @@
 (defn ensure-parameter-schema-names [route-with-meta]
   (if-let [all-parameters (get-in route-with-meta [:metadata :parameters])]
     (->> all-parameters
-         (map (fn [{:keys [model type] :as parameter}]
+         (mapv (fn [{:keys [model type] :as parameter}]
                 (if-not (direct-or-contained schema/named-schema? model)
                   (update-in parameter [:model]
                              swagger-impl/update-schema
