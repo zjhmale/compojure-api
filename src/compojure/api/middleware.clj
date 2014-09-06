@@ -3,8 +3,8 @@
             [compojure.route :as route]
             [compojure.core :refer :all]
             [ring.util.http-response :refer [bad-request internal-server-error]]
-            [ring.middleware.format-response :as format-response]
-            [ring.middleware.format-params :as format-params :refer [wrap-restful-params]]
+            [ring.middleware.format-response :refer [wrap-restful-response]]
+            [ring.middleware.format-params :refer [wrap-restful-params]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.nested-params :refer [wrap-nested-params]]
             [ring.middleware.params :refer [wrap-params]]
@@ -38,7 +38,7 @@
 (def mime-types (into {} (map (fn [[k x]]
                                 (let [t (:enc-type x)]
                                   [k (str (:type t) "/" (:sub-type t))]))
-                              format-response/format-encoders)))
+                              ring.middleware.format-response/format-encoders)))
 
 (def res-mime-types (map mime-types [:json :yaml :edn :clojure :yaml-in-html :transit-json :transit-msgpack]))
 
@@ -74,32 +74,6 @@
     (or (:compojure.api.meta/serializable? response)
         (coll? body))))
 
-;; Version with out serializable?
-(defn wrap-restful-response
-  "Wrapper that tries to do the right thing with the response *:body*
-   and provide a solid basis for a RESTful API. It will serialize to
-   JSON, YAML, Clojure, Transit or HTML-wrapped YAML depending on Accept header.
-   See wrap-format-response for more details. Recognized formats are
-   *:json*, *:json-kw*, *:edn* *:yaml*, *:yaml-in-html*, *:transit-json*,
-   *:transit-msgpack*."
-  [handler & {:keys [handle-error formats charset binary?]
-              :or {handle-error format-response/default-handle-error
-                   charset format-response/default-charset-extractor
-                   formats [:json :yaml :edn :clojure :yaml-in-html :transit-json :transit-msgpack]}}]
-  (let [encoders (for [format formats
-                       :when format
-                       :let [encoder (if (map? format)
-                                       format
-                                       (get format-response/format-encoders (keyword format)))]
-                       :when encoder]
-                   encoder)]
-    (format-response/wrap-format-response handler
-                                          :predicate serializable?
-                                          :encoders encoders
-                                          :binary? binary?
-                                          :charset charset
-                                          :handle-error handle-error)))
-
 (defn api-middleware
   "opinionated chain of middlewares for web apis."
   [handler]
@@ -111,7 +85,8 @@
       (wrap-restful-params
         :formats [:json-kw :edn :yaml-kw :transit-msgpack :transit-json]
         :handle-error handle-req-error)
-      (wrap-restful-response)
+      (wrap-restful-response
+        :predicate serializable?)
       wrap-keyword-params
       wrap-nested-params
       wrap-params))
