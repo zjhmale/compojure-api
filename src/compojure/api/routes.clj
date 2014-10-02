@@ -3,7 +3,9 @@
 
 (def +routes-sym+ '+routes+)
 
-(defmacro with-routes [& body]
+(defmacro with-routes
+  {:requires [routes]}
+  [& body]
   `(do (def ~+routes-sym+ (atom {}))
        (routes ~@body)))
 

@@ -196,6 +196,7 @@
 
    :title :description :termsOfServiceUrl
    :contact :license :licenseUrl"
+  {:requires [routes #'GET swagger/api-declaration swagger/basepath swagger/api-listing]}
   [& body]
   (let [[path key-values] (if (string? (first body))
                             [(first body) (rest body)]
@@ -216,6 +217,7 @@
    Keyword value pairs or a single Map for meta-data
    and a normal route body. Macropeels the body and
    extracts route, model and endpoint meta-datas."
+  {:requires [routes]}
   [name & body]
   (let [[details body] (swagger-info body)
         name (st/replace (str (eval name)) #" " "")]

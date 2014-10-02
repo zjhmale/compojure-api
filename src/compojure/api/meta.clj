@@ -36,6 +36,7 @@
 (defn src-coerce!
   "Return source code for coerce! for a schema with coercer type,
    extracted from a key in a ring request."
+  {:requires [keywordize-keys]}
   [schema key type]
   `(schema/coerce!
      ~schema
@@ -164,6 +165,7 @@
 
 (defmacro middlewares
   "Wraps routes with given middlewares using thread-first macro."
+  {:requires [routes]}
   [middlewares & body]
   (let [middlewares (reverse middlewares)]
     `(-> (routes ~@body)
@@ -194,7 +196,9 @@
             (RuntimeException.
               (str "unknown compojure destruction syntax: " arg)))))
 
-(defn restructure [method [path arg & args]]
+(defn restructure
+  {:requires [#'letk #'meta-container]}
+  [method [path arg & args]]
   (let [method-symbol (symbol (str (-> method meta :ns) "/" (-> method meta :name)))
         [parameters body] (extract-parameters args)
         [lets letks responses middlewares] [[] [] nil nil]

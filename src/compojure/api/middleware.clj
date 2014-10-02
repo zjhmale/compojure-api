@@ -1,13 +1,13 @@
 (ns compojure.api.middleware
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
-            [ring.middleware.format-params :as format-params :refer [wrap-restful-params]]
+            [ring.middleware.format-params :refer [wrap-restful-params]]
             [ring.middleware.format-response :as format-response]
-            ring.middleware.http-response
+            [ring.middleware.http-response :refer [catch-response]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.nested-params :refer [wrap-nested-params]]
             [ring.middleware.params :refer [wrap-params]]
-            ring.swagger.middleware
+            [ring.swagger.middleware :refer [catch-validation-errors]]
             [ring.util.http-response :refer :all]))
 
 (defroutes public-resource-routes
@@ -102,8 +102,8 @@
   [handler & [{:keys [formats]
                :or {formats [:json-kw :yaml-kw :edn :transit-json :transit-msgpack]}}]]
   (-> handler
-      ring.middleware.http-response/catch-response
-      ring.swagger.middleware/catch-validation-errors
+      catch-response
+      catch-validation-errors
       ex-info-support
       (wrap-publish-swagger-formats
         :request-formats (remove response-only-mimes formats)
