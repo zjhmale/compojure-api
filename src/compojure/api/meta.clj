@@ -80,9 +80,8 @@
                  :let [description (or (some-> schema meta :message) ; symbol meta
                                        (some-> schema eval meta :json-schema :description) ; value meta
                                        "")]]
-             (do
-               [code {:description description
-                      :schema schema}]))))
+             [code {:description description
+                    :schema schema}])))
 
 ;;
 ;; Extension point
