@@ -76,9 +76,13 @@
 ;;
 
 (defn- convert-responses [responses]
-  (into {} (for [[code schema] responses]
-             [code {:description (or (some-> schema meta :message) "")
-                    :schema schema}])))
+  (into {} (for [[code schema] responses
+                 :let [description (or (some-> schema meta :message) ; symbol meta
+                                       (some-> schema eval meta :json-schema :description) ; value meta
+                                       "")]]
+             (do
+               [code {:description description
+                      :schema schema}]))))
 
 ;;
 ;; Extension point

@@ -828,3 +828,18 @@
       (let [[status spec] (get* api "/swagger.json" {})]
         status => 200
         (-> spec :definitions :Kikka :properties keys) => (keys Kikka))))
+
+(defroutes* response-descriptions-routes
+  (GET* "/x" []
+    :responses {500 (describe s/Str "Server error")}
+    identity))
+
+(defapi api
+  (swagger-docs)
+  response-descriptions-routes)
+
+(fact "response descriptions"
+  (let [[status spec] (get* api "/swagger.json" {})]
+    status => 200
+    (-> spec :paths vals first :get :responses :500 :description)
+    => "Server error"))

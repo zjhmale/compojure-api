@@ -99,7 +99,8 @@
     :tags ["responses"]
     (POST* "/number" []
       :query-params [x :- Long y :- Long]
-      :responses    {403 ^{:message "Underflow"} ErrorEnvelope}
+      :responses     {403 ^{:message "Underflow"} ErrorEnvelope
+                      404 (describe ErrorEnvelope "not found")}
       :return       Total
       :summary      "x-y with body-parameters."
       (let [total (- x y)]
