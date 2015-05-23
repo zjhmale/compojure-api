@@ -959,7 +959,7 @@
                   (GET* "/api/pong" []
                     :return IllegalValue
                     identity))]
-      (eval api') => anything))
+      (eval api') => fn?))
   (fact "can be enabled with option"
     (let [api' `(api
                   {:verify-routes true}
