@@ -955,17 +955,17 @@
 
 (fact "compile-time route verification"
   (fact "is disabled by default"
-    (let [api' `(api
+    (let [app' `(api
                   (GET* "/api/pong" []
                     :return IllegalValue
                     identity))]
-      (eval api') => fn?))
+      (eval app') => fn?))
   (fact "can be enabled with option"
-    (let [api' `(api
+    (let [app' `(api
                   {:verify-routes true}
                   (GET* "/api/pong" []
                     :return IllegalValue
                     identity))]
-      (eval api') => (throws
+      (eval app') => (throws
                        IllegalArgumentException
                        "don't know how to create json-type of: class compojure.api.core_integration_test.IllegalValue"))))
