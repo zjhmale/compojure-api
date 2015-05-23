@@ -339,3 +339,7 @@
 
 (defmethod routes/collect-routes :default [body]
   (swagger-info body))
+
+(defmethod routes/verify-routes :default [routes options]
+  (s/with-fn-validation
+    (swagger2/swagger-json routes options)))

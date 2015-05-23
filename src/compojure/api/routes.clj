@@ -50,6 +50,7 @@
 ;;
 
 (defmulti collect-routes identity)
+(defmulti verify-routes (fn [routes options] true))
 
 (defmacro api-root [& body]
   (let [[routes body] (collect-routes body)

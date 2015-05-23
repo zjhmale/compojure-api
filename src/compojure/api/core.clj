@@ -16,6 +16,8 @@
   meta-data."
   [handler options]
   (let [{:keys [routes lookup] :as meta} (meta handler)]
+    (when (:verify-routes options)
+      (routes/verify-routes routes (:ring-swagger options)))
     (-> handler
         (rsm/wrap-swagger-data routes)
         (mw/api-middleware options)
@@ -29,7 +31,7 @@
    optional options map as the first parameter:
 
        (api
-         {:formats [:json :edn}
+         {:formats [:json-kw :edn}
          (context* \"/api\" []
            ...))
 
@@ -47,7 +49,7 @@
    optional options map as the first parameter:
 
        (defapi app
-         {:formats [:json :edn}
+         {:formats [:json-kw :edn}
          (context* \"/api\" []
            ...))
 

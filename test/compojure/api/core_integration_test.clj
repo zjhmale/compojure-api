@@ -950,3 +950,22 @@
                     :name :pong
                     identity))]
       (eval api') => (throws RuntimeException))))
+
+(defrecord IllegalValue [])
+
+(fact "compile-time route verification"
+  (fact "is disabled by default"
+    (let [api' `(api
+                  (GET* "/api/pong" []
+                    :return IllegalValue
+                    identity))]
+      (eval api') => anything))
+  (fact "can be enabled with option"
+    (let [api' `(api
+                  {:verify-routes true}
+                  (GET* "/api/pong" []
+                    :return IllegalValue
+                    identity))]
+      (eval api') => (throws
+                       IllegalArgumentException
+                       "don't know how to create json-type of: class compojure.api.core_integration_test.IllegalValue"))))
