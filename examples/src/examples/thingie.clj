@@ -6,7 +6,8 @@
             ring.swagger.json-schema-dirty
             [examples.pizza :refer [pizza-routes Pizza]]
             [examples.ordered :refer [ordered-routes]]
-            [examples.dates :refer [date-routes]])
+            [examples.dates :refer [date-routes]]
+            [ring.swagger.coerce :refer [csv-params ssv-params tsv-params pipe-params multi-params]])
   (:import [org.joda.time DateTime]))
 
 ;;
@@ -116,6 +117,12 @@
       :query-params [x :- Long {y :- Long 1}]
       :summary      "x+y with query-parameters. y defaults to 1."
       (ok (+ x y)))
+
+    (GET* "/plus-many" []
+      :return       Long
+      :query-params [xs :- (multi-params [Long])]
+      :summary      "Sum of xs"
+      (ok (apply + xs)))
 
     (GET* "/datetime-now" []
       :return DateTime
