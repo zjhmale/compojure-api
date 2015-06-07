@@ -6,8 +6,7 @@
             ring.swagger.json-schema-dirty
             [examples.pizza :refer [pizza-routes Pizza]]
             [examples.ordered :refer [ordered-routes]]
-            [examples.dates :refer [date-routes]]
-            [ring.swagger.coerce :refer [csv-params ssv-params tsv-params pipe-params multi-params]])
+            [examples.dates :refer [date-routes]])
   (:import [org.joda.time DateTime]))
 
 ;;
@@ -100,7 +99,7 @@
     :tags ["responses"]
     (GET* "/" []
       :query-params [return :- (s/enum :200 :403 :404)]
-      :responses    {403 {:schema {:code s/Str, :description "spiders?"}}
+      :responses    {403 {:schema {:code s/Str}, :description "spiders?"}
                      404 {:schema {:reson s/Str}, :description "lost?"}}
       :return       Total
       :summary      "multiple returns models"
@@ -120,7 +119,7 @@
 
     (GET* "/plus-many" []
       :return       Long
-      :query-params [xs :- (multi-params [Long])]
+      :query-params [xs :- [Long]]
       :summary      "Sum of xs"
       (ok (apply + xs)))
 

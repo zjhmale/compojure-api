@@ -34,3 +34,8 @@
 (defn -main []
   (component/start (new-system))
   (println "server started"))
+
+(comment
+  (def system (new-system))
+  (alter-var-root #'system component/start)
+  (alter-var-root #'system component/stop))

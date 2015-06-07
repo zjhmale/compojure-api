@@ -18,7 +18,11 @@
        (if (schema.utils/error? x)
          x
          (sub-walker x)))))
-  (explain [this] (cons 'file m)))
+  (explain [this] (cons 'file m))
+
+  ring.swagger.json_schema.JsonSchema
+  (json-property [this _]
+    {:type "file"}))
 
 (def TempFileUpload
   "Schema for file param created by ring.middleware.multipart-params.temp-file store."
@@ -32,5 +36,3 @@
   (->Upload {:filename s/Str
              :content-type s/Str
              :bytes s/Any}))
-
-(defmethod js/json-type Upload [_] {:type "file"})
