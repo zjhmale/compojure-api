@@ -1,4 +1,4 @@
-(defproject zjhmale/compojure-api "0.22.3"
+(defproject zjhmale/compojure-api "0.22.6"
   :description "Compojure Api"
   :url "https://github.com/zjhmale/compojure-api"
   :license {:name "Eclipse Public License"
