@@ -13,7 +13,7 @@
                  [prismatic/schema "0.4.3"]
                  [org.tobereplaced/lettercase "1.0.0"]
                  [metosin/ring-http-response "0.6.3"]
-                 [zjhmale/ring-swagger "0.21.0"]
+                 [zjhmale/ring-swagger "0.20.4"]
                  [metosin/schema-tools "0.5.1"]
                  [metosin/ring-middleware-format "0.6.0"]
                  [backtick "0.3.3"]
