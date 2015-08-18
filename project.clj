@@ -1,6 +1,6 @@
-(defproject metosin/compojure-api "0.22.2"
+(defproject zjhmale/compojure-api "0.22.2"
   :description "Compojure Api"
-  :url "https://github.com/metosin/compojure-api"
+  :url "https://github.com/zjhmale/compojure-api"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"
             :distribution :repo
@@ -13,7 +13,7 @@
                  [prismatic/schema "0.4.3"]
                  [org.tobereplaced/lettercase "1.0.0"]
                  [metosin/ring-http-response "0.6.3"]
-                 [metosin/ring-swagger "0.20.4"]
+                 [zjhmale/ring-swagger "0.21.0"]
                  [metosin/schema-tools "0.5.1"]
                  [metosin/ring-middleware-format "0.6.0"]
                  [backtick "0.3.3"]
@@ -44,7 +44,7 @@
              :add-linters [:unused-namespaces]}
   :codeina {:sources ["src"]
             :output-dir "gh-pages/doc"
-            :src-dir-uri "http://github.com/metosin/compojure-api/blob/master/"
+            :src-dir-uri "http://github.com/zjhmale/compojure-api/blob/master/"
             :src-linenum-anchor-prefix "L" }
   :aliases {"all" ["with-profile" "dev:dev,1.7"]
             "start-thingie" ["run"]
