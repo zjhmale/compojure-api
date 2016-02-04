@@ -1,4 +1,4 @@
-(defproject zjhmale/compojure-api "0.23.0"
+(defproject zjhmale/compojure-api "0.23.3"
   :description "Compojure Api"
   :url "https://github.com/zjhmale/compojure-api"
   :license {:name "Eclipse Public License"
@@ -13,7 +13,7 @@
                  [prismatic/schema "0.4.3"]
                  [org.tobereplaced/lettercase "1.0.0"]
                  [metosin/ring-http-response "0.6.3"]
-                 [zjhmale/ring-swagger "0.21.3"]
+                 [zjhmale/ring-swagger "0.23.3"]
                  [metosin/schema-tools "0.5.1"]
                  [metosin/ring-middleware-format "0.6.0"]
                  [backtick "0.3.3"]
